@@ -824,10 +824,9 @@ if (enemies.size() - level < numEnemies) {
 				repaint();
 				percentageArea = percentageArea();
 				setStatus("Level " + level + " Score " + (total + percentageArea));
-//				if (percentageArea >= 75) {
-// Target captured area is indirectly proportional to level.
-// ie. Level 1 = 90%, Level 2 = 80%, Level 3 = 70%, etc.
-int target = 100 - 10 * level;
+				// Target captured area is indirectly proportional to level.
+				// ie. Level 1 = 95%, Level 2 = 90%, Level 3 = 85%, ... Level 9 = 55%
+				int target = 100 - 5 * level;
 				if (percentageArea >= target) {
 					total += percentageArea + percentageTime;
 					setStatus("Level " + level + " Score " + total);
