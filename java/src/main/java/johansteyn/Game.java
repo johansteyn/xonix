@@ -14,9 +14,10 @@ public class Game extends Container implements KeyListener, FocusListener {
 	private static final int FIXED = 3;
 	private static final int SPARE = 4;
 	private static final int BLANK = 5;
-	private static final Color COLOR_OUTSIDE = Color.green;
+	static final Color COLOR_OUTSIDE = new Color(0, 160, 0);
 	private static final Color COLOR_INSIDE = Color.black;
-	private static final Color COLOR_ACTIVE = Color.red;
+	private static final Color COLOR_ACTIVE = new Color(200, 200, 0);
+	private static final Color COLOR_TEXT = new Color(160, 0, 0);
 	private static final Color COLOR_SPARE = Color.gray;
 	private static final Color COLOR_BLANK = Color.white;
 	private static final int DEFAULT_DELAY = 101;
@@ -26,8 +27,8 @@ public class Game extends Container implements KeyListener, FocusListener {
 		Color.red,
 		Color.black
 	};
-	private int demoWidth;
-	private int demoHeight;
+	private int width;
+	private int height;
 	private int rows = 30;
 	private int cols = 30;
 	private int[][] cells = new int[rows][cols];
@@ -97,10 +98,10 @@ public class Game extends Container implements KeyListener, FocusListener {
 			return;
 		}
 		Dimension d = getSize();
-		demoWidth = d.width;
-		demoHeight = d.height;
-		cellWidth = demoWidth / cols;
-		cellHeight = demoHeight / (rows + 1);
+		width = d.width;
+		height = d.height;
+		cellWidth = width / cols;
+		cellHeight = height / (rows + 1);
 		if (!initialized) {
 			play(false);
 			halted = true;
@@ -136,7 +137,7 @@ public class Game extends Container implements KeyListener, FocusListener {
 				g.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 				if (cells[row][col] == SPARE) {
 					g.setColor(COLOR_BLANK);
-					g.drawRect(col * cellWidth, row * cellHeight, cellWidth - 1, cellHeight - 1);
+					g.drawRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 				}
 			}
 		}
@@ -154,7 +155,7 @@ public class Game extends Container implements KeyListener, FocusListener {
 				image = gameoverImage;
 			}
 			((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-			g.drawImage(image, demoWidth / 10, 4 * demoHeight / 9, 8 * demoWidth / 10, demoHeight / 9, this);
+			g.drawImage(image, width / 10, 4 * height / 9, 8 * width / 10, height / 9, this);
 		}
 		drawPercentageTime();
 	}
@@ -165,7 +166,7 @@ public class Game extends Container implements KeyListener, FocusListener {
 
 	private void drawStrings(Graphics g, String heading, ArrayList strings, int number) {
 		g.setColor(COLOR_OUTSIDE);
-		g.fillRect(0, 0, demoWidth, demoHeight);
+		g.fillRect(0, 0, width, height);
 		String longest = "";
 		for (int i = 0; i < strings.size(); i++) {
 			String s = (String) strings.get(i);
@@ -173,8 +174,8 @@ public class Game extends Container implements KeyListener, FocusListener {
 				longest = s;
 			}
 		}
-		int fontSize = demoHeight / (number + 2) - 2;
-		g.setColor(Color.red);
+		int fontSize = height / (number + 2) - 2;
+		g.setColor(COLOR_TEXT);
 		int headingFontSize = 2 * fontSize;
 		int fw = 0;
 		while (true) {
@@ -182,12 +183,12 @@ public class Game extends Container implements KeyListener, FocusListener {
 			g.setFont(font);
 			FontMetrics fm = g.getFontMetrics(font);
 			fw = fm.stringWidth(heading);
-			if (fw < demoWidth) {
+			if (fw < width) {
 				break;
 			}
 			headingFontSize -= 4;
 		}
-		g.drawString(heading, (demoWidth - fw) / 2, headingFontSize);
+		g.drawString(heading, (width - fw) / 2, headingFontSize);
 		g.setColor(Color.black);
 		Font font = new Font("Monospaced", Font.PLAIN, fontSize);
 		g.setFont(font);
@@ -195,7 +196,7 @@ public class Game extends Container implements KeyListener, FocusListener {
 		fw = fm.stringWidth(longest);
 		for (int i = 0; i < strings.size() && i < number; i++) {
 			String s = (String) strings.get(i);
-			g.drawString(s, (demoWidth - fw) / 2, (i + 3) * fontSize);
+			g.drawString(s, (width - fw) / 2, (i + 3) * fontSize);
 		}
 	}
 
@@ -247,12 +248,11 @@ public class Game extends Container implements KeyListener, FocusListener {
 			}
 		}
 		for (int i = 0; i < level; i++) {
-//			newEnemies.add(new Enemy(false));
 			if (!preserve) {
 				newEnemies.add(new Enemy(true));
 			}
 		}
-newEnemies.add(new Enemy(false));
+		newEnemies.add(new Enemy(false));
 		enemies = newEnemies;
 		percentageArea = percentageArea();
 		setStatus("Level " + level + " Score " + (total + percentageArea));
@@ -402,15 +402,15 @@ if (enemies.size() - level < numEnemies) {
 		winner = true;
 		Graphics g = getGraphics();
 		String string = "High Score!";
-		int fontSize = demoWidth / string.length();
-		fontSize = fontSize > demoHeight / 2 ? demoHeight / 2 : fontSize;
+		int fontSize = width / string.length();
+		fontSize = fontSize > height / 2 ? height / 2 : fontSize;
 		int fw = 0;
 		while (true) {
 			Font font = new Font("SansSerif", Font.BOLD, fontSize);
 			g.setFont(font);
 			FontMetrics fm = g.getFontMetrics(font);
 			fw = fm.stringWidth(string);
-			if (fw < demoWidth) {
+			if (fw < width) {
 				break;
 			}
 			fontSize -= 4;
@@ -422,10 +422,10 @@ if (enemies.size() - level < numEnemies) {
 			}
 			if (i % 10 == 0) {
 				g.setColor(winnerColors[color++ % winnerColors.length]);
-				g.fillRect(0, 0, demoWidth, demoHeight);
+				g.fillRect(0, 0, width, height);
 			}
 			g.setColor(randomColor());
-			g.drawString(string, demoWidth / 2 - fw / 2, demoHeight / 2 + fontSize / 2);
+			g.drawString(string, width / 2 - fw / 2, height / 2 + fontSize / 2);
 			sleep(10);
 		}
 		winner = false;
@@ -639,10 +639,10 @@ if (enemies.size() - level < numEnemies) {
 		int x = 0;
 		int y = rows * cellHeight;
 		int w = cols * cellWidth;
-		int h = demoHeight - y;
-		g.setColor(Color.white);
+		int h = height - y;
+		g.setColor(Color.darkGray);
 		g.fillRect(x, y, w, h);
-		g.setColor(Color.red);
+		g.setColor(Color.gray);
 		g.fillRect(x, y, percentageTime * w / 100, h);
 		g.setColor(Color.black);
 		g.drawRect(x, y, w - 1, h - 1);
@@ -725,7 +725,7 @@ if (enemies.size() - level < numEnemies) {
 		static final int DOWN = 2;
 		static final int LEFT = 3;
 		static final int RIGHT = 4;
-		Color color = Color.red;
+		Color color = Color.yellow;
 		int row;
 		int col;
 		int dir = UP;
@@ -843,7 +843,7 @@ if (enemies.size() - level < numEnemies) {
 			g.setColor(color);
 			g.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 			g.setColor(Color.black);
-			g.drawRect(col * cellWidth, row * cellHeight, cellWidth - 1, cellHeight - 1);
+			g.drawRect(col * cellWidth + 1, row * cellHeight + 1, cellWidth - 2, cellHeight - 2);
 		}
 
 	}
@@ -867,11 +867,7 @@ if (enemies.size() - level < numEnemies) {
 		
 		public Enemy(boolean inside) {
 			this.inside = inside;
-			if (inside) {
-				color = COLOR_OUTSIDE;
-			} else {
-				color = COLOR_INSIDE;
-			}
+			color = new Color(160, 0, 0);
 			while (true) {
 				row = (int) (Math.random() * rows);
 				col = (int) (Math.random() * cols);
@@ -929,20 +925,12 @@ if (enemies.size() - level < numEnemies) {
 			boolean hit = false;
 			if (inside && cells[player.row][player.col] == INSIDE ||
 				!inside && cells[player.row][player.col] == OUTSIDE) {
-				if (row == player.row && col == player.col/* ||
-					row - 1 == player.row && col == player.col ||
-					row + 1 == player.row && col == player.col ||
-					row == player.row && col - 1 == player.col ||
-					row == player.row && col + 1== player.col*/) {
+				if (row == player.row && col == player.col) {
 					hit = true;
 				}
 			}
 			if (inside) {
-				if (cells[row][col] == ACTIVE/* ||
-					row > 0 && cells[row - 1][col] == ACTIVE ||
-					row < rows - 1 && cells[row + 1][col] == ACTIVE ||
-					col > 0 && cells[row][col - 1] == ACTIVE ||
-					col < cols - 1 &&cells[row][col + 1] == ACTIVE*/) {
+				if (cells[row][col] == ACTIVE) {
 					hit = true;
 				}
 			}
@@ -962,7 +950,7 @@ if (enemies.size() - level < numEnemies) {
 			g.setColor(color);
 			g.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 			g.setColor(Color.black);
-			g.drawRect(col * cellWidth, row * cellHeight, cellWidth - 1, cellHeight - 1);
+			g.drawRect(col * cellWidth + 1, row * cellHeight + 1, cellWidth - 2, cellHeight - 2);
 		}
 	}
 }

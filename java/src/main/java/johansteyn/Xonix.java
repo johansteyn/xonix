@@ -107,7 +107,7 @@ public class Xonix extends Frame {
 		private Dimension preferredSize;
 
 		public Status() {
-			setBackground(Color.green);
+			setBackground(Game.COLOR_OUTSIDE);
 			setForeground(Color.black);
 		}
 
