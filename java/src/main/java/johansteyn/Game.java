@@ -20,7 +20,7 @@ public class Game extends Container implements KeyListener, FocusListener {
 	private static final Color COLOR_TEXT = new Color(160, 0, 0);
 	private static final Color COLOR_SPARE = Color.gray;
 	private static final Color COLOR_BLANK = Color.white;
-	private static final int DEFAULT_DELAY = 101;
+	private static final int DEFAULT_DELAY = 120;
 	private static final int DELAY_INCREMENT = 10;
 	private static final int DEFAULT_LIVES = 3;
 	private static final Color[] winnerColors = {
@@ -825,8 +825,8 @@ if (enemies.size() - level < numEnemies) {
 				percentageArea = percentageArea();
 				setStatus("Level " + level + " Score " + (total + percentageArea));
 				// Target captured area is indirectly proportional to level.
-				// ie. Level 1 = 95%, Level 2 = 90%, Level 3 = 85%, ... Level 9 = 55%
-				int target = 100 - 5 * level;
+				// ie. Level 1 = 90%, Level 2 = 85%, Level 3 = 80%, ... Level 9 = 50%
+				int target = 100 - 5 * (level + 1);
 				if (percentageArea >= target) {
 					total += percentageArea + percentageTime;
 					setStatus("Level " + level + " Score " + total);
